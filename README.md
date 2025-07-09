@@ -1,1 +1,1 @@
-# sams
+# Smart Admissions Management System
