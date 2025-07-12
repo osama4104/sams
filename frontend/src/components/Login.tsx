@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { ISignupDefault, type ISignup } from "../types";
+import { useNavigate } from "react-router-dom";
 import useSnackbar from "../hooks/useSnackbar";
 import TextInput from "./common/TextInput";
 import PasswordInput from "./common/PasswordInput";
+import type { SelectChangeEvent } from "@mui/material";
+
 import {
   Box,
   Button,
@@ -14,12 +16,17 @@ import {
   FormControlLabel,
   Link,
   Typography,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@mui/material";
 
 type ILoginFormData = {
   email: string;
   password: string;
   rememberMe: boolean;
+  role: string;
 };
 
 const Login = () => {
@@ -27,18 +34,28 @@ const Login = () => {
     email: "",
     password: "",
     rememberMe: false,
+    role: "admin",
   });
   const [formErrors, setFormErrors] = useState<
     Partial<Record<keyof ILoginFormData, string>>
   >({});
   const { showSnackbar, SnackbarComponent } = useSnackbar();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    const finalValue = type === "checkbox" ? checked : value.trim();
+  const navigate = useNavigate();
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = e.target;
+    const finalValue =
+      type === "checkbox" ? (e.target as HTMLInputElement) : value.trim();
     setFormData((prev) => {
       const updated = { ...prev, [name]: finalValue };
       validateInputs(name, finalValue.toString());
+      return updated;
+    });
+  };
+  const handleRoleChange = (e: SelectChangeEvent<string>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
+      validateInputs(name, value);
       return updated;
     });
   };
@@ -94,7 +111,11 @@ const Login = () => {
       severity: "success",
     });
   };
-
+  if (formData.role === "admin") {
+    navigate("/admin");
+  } else if (formData.role === "careTaker") {
+    navigate("/dashboard");
+  }
   return (
     <>
       <Box
@@ -121,7 +142,7 @@ const Login = () => {
               name="email"
               label="Email"
               value={formData.email}
-              onChange={handleChange}
+              onChange={handleInputChange}
               error={!!formErrors.email}
               helperText={formErrors.email}
             />
@@ -131,16 +152,30 @@ const Login = () => {
               name="password"
               label="Password"
               value={formData.password}
-              onChange={handleChange}
+              onChange={handleInputChange}
               error={!!formErrors.password}
               helperText={formErrors.password}
             />
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="role-label">Role</InputLabel>
+              <Select
+                labelId="role-label"
+                id="role"
+                name="role"
+                value={formData.role}
+                label="Role"
+                onChange={handleRoleChange}
+              >
+                <MenuItem value="admin">Admin</MenuItem>
+                <MenuItem value="careTaker">CareTaker</MenuItem>
+              </Select>
+            </FormControl>
             <FormControlLabel
               control={
                 <Checkbox
                   checked={formData.rememberMe}
                   name="rememberMe"
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                 />
               }
               label="Remember Me"
