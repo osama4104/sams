@@ -1,52 +1,173 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState<string>(""); //useState is used to change the initial state as per needed,here email is the initialState and setEmail is for updating the state.
-  const [password, setPassword] = useState<string>("");
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert(`Email:${email},Password:${password}`);
-  };
-  return (
-    <div className="login-wrapper">
-      <div className="login-card">
-        <div className="card-header">
-          {}
-          <h2>Login form</h2>
-        </div>
-        {}
-        <form className="Login-Form" onSubmit={handleLogin}>
-          <div className="input-group">
-            <input
-              type="text"
-              placeholder="Email or Phone"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <input
-              type="password"
-              placeholder="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            ></input>
-          </div>
-          <div className="links">
-            <a href="#">Forgot Password?</a>
-          </div>
+import { ISignupDefault, type ISignup } from "../types";
+import useSnackbar from "../hooks/useSnackbar";
+import TextInput from "./common/TextInput";
+import PasswordInput from "./common/PasswordInput";
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Checkbox,
+  FormControlLabel,
+  Link,
+  Typography,
+} from "@mui/material";
 
-          <button type="submit" className="login Button">
-            Login
-          </button>
-          <p className="SignUp">
-            Not a member?<Link to="/signup">SignUp</Link>
-          </p>
-        </form>
-      </div>
-    </div>
+type ILoginFormData = {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+};
+
+const Login = () => {
+  const [formData, setFormData] = useState<ILoginFormData>({
+    email: "",
+    password: "",
+    rememberMe: false,
+  });
+  const [formErrors, setFormErrors] = useState<
+    Partial<Record<keyof ILoginFormData, string>>
+  >({});
+  const { showSnackbar, SnackbarComponent } = useSnackbar();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    const finalValue = type === "checkbox" ? checked : value.trim();
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: finalValue };
+      validateInputs(name, finalValue.toString());
+      return updated;
+    });
+  };
+
+  const validateInputs = (name: string, value: string) => {
+    let error = "";
+
+    switch (name) {
+      case "email": {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          error = "Invalid email format";
+        }
+        break;
+      }
+      case "password":
+        if (value.length < 6) {
+          error = "Password must be at least 6 characters";
+        }
+        break;
+      default:
+        break;
+    }
+
+    setFormErrors((prev) => ({ ...prev, [name]: error }));
+  };
+
+  const handleSubmitClick = () => {
+    const hasErrors = Object.values(formErrors).some(
+      (err: string) => err && err.trim() !== ""
+    );
+    if (hasErrors) {
+      showSnackbar({
+        message: "Resolve errors before submitting.",
+        severity: "error",
+      });
+      return;
+    }
+
+    const isEmpty = Object.entries(formData)
+      .filter(([key, value]) => typeof value === "string")
+      .some(([, value]) => (value as string).trim() === "");
+    if (isEmpty) {
+      showSnackbar({
+        message: "Email and Password cannot be empty!",
+        severity: "warning",
+      });
+      return;
+    }
+
+    showSnackbar({
+      message: "Login successful!",
+      severity: "success",
+    });
+  };
+
+  return (
+    <>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        width="100vw"
+        minHeight="100vh"
+      >
+        <Card sx={{ maxWidth: 400, p: 2 }}>
+          <CardHeader
+            title={
+              <Typography
+                variant="h6"
+                sx={{ textAlign: "center", fontWeight: 500 }}
+              >
+                Login
+              </Typography>
+            }
+          />
+          <CardContent>
+            <TextInput
+              id="email"
+              name="email"
+              label="Email"
+              value={formData.email}
+              onChange={handleChange}
+              error={!!formErrors.email}
+              helperText={formErrors.email}
+            />
+
+            <PasswordInput
+              id="password"
+              name="password"
+              label="Password"
+              value={formData.password}
+              onChange={handleChange}
+              error={!!formErrors.password}
+              helperText={formErrors.password}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.rememberMe}
+                  name="rememberMe"
+                  onChange={handleChange}
+                />
+              }
+              label="Remember Me"
+            />
+          </CardContent>
+          <CardActions style={{ justifyContent: "center" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmitClick}
+            >
+              Login
+            </Button>
+          </CardActions>
+          <CardContent style={{ display: "flex", justifyContent: "center" }}>
+            <Typography variant="caption" align="center">
+              Don't have an account?&nbsp;
+              <Link href="/signup" underline="hover">
+                Sign Up
+              </Link>
+            </Typography>
+          </CardContent>
+        </Card>
+        <SnackbarComponent />
+      </Box>
+    </>
   );
 };
-export default LoginPage;
+
+export default Login;
