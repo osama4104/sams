@@ -1,11 +1,7 @@
-import './App.css'
+import AppRoutes from './routes/AppRoutes';
 
-function App() {
-  return (
-    <>
-      <h1>Smart Alarm Management System</h1>
-    </>
-  )
-}
+const App = () => {
+  return <AppRoutes />;
+};
 
-export default App
+export default App;
