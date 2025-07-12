@@ -1,1 +1,1 @@
-# Smart Admissions Management System
+# Smart Alarm Management System
