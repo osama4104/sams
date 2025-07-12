@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Login from "./Login";
+import { Link } from "react-router-dom";
 const SignUp: React.FC = () => {
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
@@ -58,7 +58,7 @@ const SignUp: React.FC = () => {
             SignUp
           </button>
           <p className="signup-text">
-            Already have an account ? <a href="#">Login</a>
+            Already have an account? <Link to="/">Login</Link>
           </p>
         </form>
       </div>

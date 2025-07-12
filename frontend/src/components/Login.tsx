@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SignUp from "./SignUp";
+import { Link } from "react-router-dom";
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>(""); //useState is used to change the initial state as per needed,here email is the initialState and setEmail is for updating the state.
   const [password, setPassword] = useState<string>("");
@@ -42,7 +42,7 @@ const LoginPage: React.FC = () => {
             Login
           </button>
           <p className="SignUp">
-            Not a member?<a href="#">SignUp Now</a>
+            Not a member?<Link to="/signup">SignUp</Link>
           </p>
         </form>
       </div>
