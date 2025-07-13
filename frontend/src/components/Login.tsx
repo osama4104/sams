@@ -110,12 +110,14 @@ const Login = () => {
       message: "Login successful!",
       severity: "success",
     });
+
+    if (formData.role === "admin") {
+      navigate("/admin");
+    } else if (formData.role === "careTaker") {
+      navigate("/dashboard");
+    }
   };
-  if (formData.role === "admin") {
-    navigate("/admin");
-  } else if (formData.role === "careTaker") {
-    navigate("/dashboard");
-  }
+
   return (
     <>
       <Box
