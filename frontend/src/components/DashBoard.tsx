@@ -1,4 +1,4 @@
 const DashBoard = () => {
-  return <>Welcome to DashBoard!!</>;
+  return <h1>Welcome to DashBoard!!</h1>;
 };
 export default DashBoard;

@@ -1,4 +1,15 @@
-const Admin = () => {
-  return <h1>Welcome to admin Page!!</h1>;
+// src/pages/Admin.tsx
+import {} from "@mui/material";
+import { Container, Typography } from "@mui/material";
+import React from "react";
+import Sidebar from "./Sidebar";
+
+const AdminDashboard = () => {
+  return (
+    <Container>
+      <Sidebar />
+    </Container>
+  );
 };
-export default Admin;
+
+export default AdminDashboard;

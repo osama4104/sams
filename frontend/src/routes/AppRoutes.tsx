@@ -4,7 +4,7 @@ import Login from "../components/Login";
 import NotFound from "../components/NotFound";
 import Admin from "../components/Admin";
 import DashBoard from "../components/DashBoard";
-
+import sidebar from "../components/Sidebar";
 import MainLayout from "../layouts/MainLayout";
 import SignUp from "../components/SignUp";
 // import Dashboard from '../components/Dashboard';
